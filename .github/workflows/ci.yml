@@ -22,7 +22,7 @@ jobs:
           java-version: '17'
 
       - name: Configue AWS credentials
-        uses: aws-actions/Configue-aws-credentials@v5
+        uses: aws-actions/Configure-aws-credentials@v5
         with:
           role-to-assume: arn:aws:iam::237575223564:role/sprint3-github-actions-role
           aws-region: ap-northeast-1
