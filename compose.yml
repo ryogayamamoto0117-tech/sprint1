@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: sprint2db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/init:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data  
+
+  app:
+    image: sprint4-app:latest
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: sprint2db
+      DB_USER: postgres
+      DB_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db        
+
+volumes:
+  postgres_data:
