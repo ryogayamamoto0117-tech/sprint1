@@ -9,7 +9,7 @@ public class HelloController{
 
     @GetMapping("/")
     public String home(){
-        return "Hello Sprint 3 CI/CD!";
+        return "Hello Sprint 4 Docker v2!";
     }
 
     @GetMapping("/health")
