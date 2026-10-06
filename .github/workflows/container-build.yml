@@ -3,7 +3,14 @@ name: Sprint4 Container Build
 on:
   push:
     branches:
-      - sprint4-docker
+      - master
+    paths:
+      - 'src/**'
+      - 'pom.xml'
+      - 'mvnw'
+      - '.mvn/**'
+      - 'Dockerfile'
+      - '.dockerignore'
 
 permissions:
   contents: read

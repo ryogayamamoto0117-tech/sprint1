@@ -29,7 +29,7 @@ Java / Spring Boot / Git / Maven / AWS / Linux / DevOpsをそれぞれ使用し�
   ## Test
 
 ```powershell
-.\mvnw.cwd test
+.\mvnw.cmd test
 ```
 
 MockMvcを使用して`/health`の以下を確認する。
@@ -41,7 +41,7 @@ MockMvcを使用して`/health`の以下を確認する。
 ## Build
 
 ```powershell
-.\mvnw.cwd package
+.\mvnw.cmd package
 ```
 
 Mavenを使用してテストを実行し、実行可能なJARファイルを生成する。
@@ -237,7 +237,7 @@ Linuxコマンドは、必要になったタイミングで正式名称・オプ
 
 ## Deploy JAR to EC2
 
-ローカル環境でmavenによって生成したJARを、SPCでEC2へ転送した。
+ローカル環境でmavenによって生成したJARを、SCPでEC2へ転送した。
 
 ローカル側のJAR：
 
