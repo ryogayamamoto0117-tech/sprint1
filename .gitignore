@@ -42,5 +42,8 @@ build/
 *.tfvars
 *.tfvars.json
 *.tfplan
+
+### claude code ###
 crash.log
 crash.*.log
+.claude/settings.local.json

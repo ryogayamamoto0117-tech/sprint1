@@ -1,0 +1,48 @@
+name: Terraform CI
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'infra/sprint6/**'
+      - '.github/workflows/terraform.yml'
+
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'infra/sprint6/**'
+      - '.github/workflows/terraform.yml'
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: infra/sprint6
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.16.5'
+
+      - name: Check Terraform formatting
+        run: terraform fmt -check -recursive
+
+      - name: Initialize Terraform without backend
+        run: terraform init -backend=false -input=false
+
+      - name: Validate Terraform configuration
+        run: terraform validate
+        
