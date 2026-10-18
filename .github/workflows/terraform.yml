@@ -19,6 +19,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   validate:
@@ -45,4 +46,19 @@ jobs:
 
       - name: Validate Terraform configuration
         run: terraform validate
+
+      - name: Configure AWS credentials
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::237575223564:role/terraform-plan-github-actions-role
+          aws-region: ap-northeast-1
+
+      - name: Initialize Terraform with S3 backend
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+        run: terraform init -reconfigure -input=false
+
+      - name: Plan Terraform changes
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+        run: terraform plan -input=false
         
