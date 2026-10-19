@@ -1,0 +1,28 @@
+name: Terraform Apply OIDC Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  oidc-test:
+    name: Test Apply Role OIDC
+    runs-on: ubuntu-latest
+
+    environment: terraform-apply
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::237575223564:role/terraform-apply-github-actions-role
+          aws-region: ap-northeast-1
+
+      - name: Verify assumed IAM role
+        run: aws sts get-caller-identity
