@@ -1,0 +1,53 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ManageSprint6EcsCluster",
+      "Effect": "Allow",
+      "Action": [
+        "ecs:CreateCluster",
+        "ecs:DeleteCluster"
+      ],
+      "Resource": "arn:aws:ecs:ap-northeast-1:237575223564:cluster/sprint6-ecs-cluster"
+    },
+    {
+      "Sid": "ManageSprint6EcsService",
+      "Effect": "Allow",
+      "Action": [
+        "ecs:CreateService",
+        "ecs:UpdateService",
+        "ecs:DeleteService"
+      ],
+      "Resource": "arn:aws:ecs:ap-northeast-1:237575223564:service/sprint6-ecs-cluster/sprint6-app-service"
+    },
+    {
+      "Sid": "RegisterSprint6TaskDefinition",
+      "Effect": "Allow",
+      "Action": [
+        "ecs:RegisterTaskDefinition"
+      ],
+      "Resource": "arn:aws:ecs:ap-northeast-1:237575223564:task-definition/sprint6-app:*"
+    },
+    {
+      "Sid": "DeregisterTaskDefinition",
+      "Effect": "Allow",
+      "Action": [
+        "ecs:DeregisterTaskDefinition"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ManageSprint6EcsTags",
+      "Effect": "Allow",
+      "Action": [
+        "ecs:TagResource",
+        "ecs:UntagResource"
+      ],
+      "Resource": [
+        "arn:aws:ecs:ap-northeast-1:237575223564:cluster/sprint6-ecs-cluster",
+        "arn:aws:ecs:ap-northeast-1:237575223564:service/sprint6-ecs-cluster/sprint6-app-service",
+        "arn:aws:ecs:ap-northeast-1:237575223564:task-definition/sprint6-app:*"
+      ]
+    }
+  ]
+}

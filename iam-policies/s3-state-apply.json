@@ -1,0 +1,13 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "WriteSprint6TerraformState",
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject"
+      ],
+      "Resource": "arn:aws:s3:::terraform-state-237575223564-ap-northeast-1/project-nexus/sprint6/terraform.tfstate"
+    }
+  ]
+}

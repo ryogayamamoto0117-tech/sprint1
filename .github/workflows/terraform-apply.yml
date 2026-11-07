@@ -1,0 +1,149 @@
+name: Terraform Apply
+
+on:
+    workflow_dispatch:
+
+concurrency:
+    group: terraform-sprint6
+    cancel-in-progress: false
+
+permissions:
+    contents: read
+
+jobs:
+    plan:
+        name: Terraform Plan
+        if: github.ref == 'refs/heads/master'
+        runs-on: ubuntu-latest
+
+        permissions:
+            contents: read
+            id-token: write
+
+        defaults:
+            run:
+                working-directory: infra/sprint6
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Terraform
+              uses: hashicorp/setup-terraform@v3
+              with:
+                terraform_version: '1.16.5'
+
+            - name: Set up python
+              uses: actions/setup-python@v5
+              with:
+                python-version: '3.12'
+
+            - name: Install Python dependencies
+              run: python -m pip install cryptography==46.0.3 boto3
+
+            - name: Configure AWS credentials for Plan
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                role-to-assume: arn:aws:iam::237575223564:role/terraform-plan-github-actions-role
+                aws-region: ap-northeast-1
+
+            - name: Initialize Terraform with S3 backend
+              run: terraform init -reconfigure -input=false
+
+            - name: Create Terraform Plan
+              run: terraform plan -input=false -out=tfplan
+
+            - name: Check Terraform Plan Summary
+              run: |
+                terraform show -json tfplan |
+                  jq -r '
+                    [.resource_changes[]? |
+                      select(.change.actions != ["no-op"]) |
+                      .change.actions | join(",")
+                    ] |
+                    group_by(.) |
+                    map("\(.[0]): \(length)") |
+                    .[]
+                  '
+            - name: Encrypt Terraform Plan
+              working-directory: ${{ github.workspace }}
+              run: python scripts/encrypt_plan.py
+
+            - name: Verify Encrypted Plan Files
+              working-directory: ${{ github.workspace }}
+              run: |
+                test -s infra/sprint6/tfplan.enc
+                test -s infra/sprint6/tfplan.key.enc
+                test -s infra/sprint6/tfplan.nonce
+                test ! -e infra/sprint6/tfplan
+
+
+            - name: Upload Terraform Plan
+              uses: actions/upload-artifact@v4
+              with:
+                name: terraform-plan
+                path: |
+                  infra/sprint6/tfplan.enc
+                  infra/sprint6/tfplan.key.enc
+                  infra/sprint6/tfplan.nonce
+                retention-days: 1
+                if-no-files-found: error
+
+    apply:
+                name: Terraform Apply
+                needs: plan
+                if: github.ref == 'refs/heads/master'
+                runs-on: ubuntu-latest
+                environment: terraform-apply
+
+                permissions:
+                  contents: read
+                  id-token: write
+
+                defaults:
+                  run:
+                      working-directory: infra/sprint6
+
+                steps:
+                  - name: Checkout code
+                    uses: actions/checkout@v4
+
+                  - name: Configure AWS credentials for apply
+                    uses: aws-actions/configure-aws-credentials@v4
+                    with:
+                      role-to-assume: arn:aws:iam::237575223564:role/terraform-apply-github-actions-role
+                      aws-region: ap-northeast-1
+
+                  - name: set up Terraform
+                    uses: hashicorp/setup-terraform@v3
+                    with:
+                      terraform_version: '1.16.5'
+
+                  - name: Set up python
+                    uses: actions/setup-python@v5
+                    with:
+                      python-version: '3.12'
+
+                  - name: install Python dependencies
+                    run: python -m pip install cryptography==46.0.3 boto3
+
+                  - name: Initialize Terraform with S3 backend
+                    run: terraform init -reconfigure -input=false
+
+                  - name: Download Terraform Plan
+                    uses: actions/download-artifact@v4
+                    with:
+                      name: terraform-plan
+                      path: infra/sprint6
+
+                  - name: Decrypt Terraform Plan
+                    working-directory: ${{ github.workspace}}
+                    run: python scripts/decrypt_plan.py
+
+                  - name: Verify Decrypted Terraform Plan
+                    run: |
+                      test -s tfplan
+                      terraform show -json tfplan > /dev/null
+
+                  - name: Apply Terraform Plan
+                    run: terraform apply -input=false tfplan

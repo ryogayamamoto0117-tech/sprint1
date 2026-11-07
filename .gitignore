@@ -43,6 +43,16 @@ build/
 *.tfvars.json
 *.tfplan
 
+### Terraform saved plan and encrypted artifacts ###
+tfplan
+tfplan.enc
+tfplan.key.enc
+tfplan.nonce
+
+### Terraform crash logs ###
+crash.log
+crash.*.log
+
 ### claude code ###
 crash.log
 crash.*.log

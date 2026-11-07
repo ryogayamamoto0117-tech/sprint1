@@ -1,0 +1,52 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "CreateSprint6TargetGroup",
+      "Effect": "Allow",
+      "Action": [
+        "elasticloadbalancing:CreateTargetGroup"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ManageSprint6TargetGroup",
+      "Effect": "Allow",
+      "Action": [
+        "elasticloadbalancing:ModifyTargetGroup",
+        "elasticloadbalancing:ModifyTargetGroupAttributes",
+        "elasticloadbalancing:DeleteTargetGroup"
+      ],
+      "Resource": "arn:aws:elasticloadbalancing:ap-northeast-1:237575223564:targetgroup/sprint6-app-tg/*"
+    },
+    {
+      "Sid": "CreateSprint6ListenerRule",
+      "Effect": "Allow",
+      "Action": [
+        "elasticloadbalancing:CreateRule"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ManageSprint6ListenerRule",
+      "Effect": "Allow",
+      "Action": [
+        "elasticloadbalancing:ModifyRule",
+        "elasticloadbalancing:DeleteRule"
+      ],
+      "Resource": "arn:aws:elasticloadbalancing:ap-northeast-1:237575223564:listener-rule/app/sprint3-alb/*/*/*"
+    },
+    {
+      "Sid": "ManageSprint6AlbTags",
+      "Effect": "Allow",
+      "Action": [
+        "elasticloadbalancing:AddTags",
+        "elasticloadbalancing:RemoveTags"
+      ],
+      "Resource": [
+        "arn:aws:elasticloadbalancing:ap-northeast-1:237575223564:targetgroup/sprint6-app-tg/*",
+        "arn:aws:elasticloadbalancing:ap-northeast-1:237575223564:listener-rule/app/sprint3-alb/*/*/*"
+      ]
+    }
+  ]
+}
